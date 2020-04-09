@@ -8,6 +8,10 @@ var keys = require("./keys.js");
 
 var spotify = new Spotify(keys.spotify);
 
+var command = process.argv[2];
+
+var value = process.argv[3];
+
 function concertThis(artist) {
   axios
     .get(
@@ -24,20 +28,36 @@ function concertThis(artist) {
       console.log(eventDate);
     });
 }
-// concertThis("The Weekend");
 
-function spotifySong(song) {
-  spotify.search({ type: "track", query: song }, function (err, data) {
+function spotifySong(input) {
+  //   console.log("value passed" + input);
+  spotify.search({ type: "track", query: input }, function (err, data) {
     if (err) {
       return console.log("Error occurred: " + err);
     }
-    for (i = 0; i < data.tracks.items.length; i++) {
-      //   console.log(data.tracks.items[i].artists);
-      var spotifyInfo = data.tracks.items[i];
-      var songArtist = spotifyInfo.artist(s)[0];
-      var songName = spotifyInfo.console.log(songArtist);
-    }
-    // console.log(data);
+
+    var spotifyInfo = data.tracks.items[0];
+    var songArtist = spotifyInfo.artists[0].name;
+    var songName = spotifyInfo.name;
+    var previewLink = spotifyInfo.preview_url;
+    var albumName = spotifyInfo.album.name;
+    console.log(songArtist);
+    console.log(songName);
+    console.log(previewLink);
+    console.log(albumName);
+
+    // console.log(data.tracks.items[0]);
   });
 }
-spotifySong("old town road");
+
+function movieThis(input) {}
+
+if (command === "spotify-this-song") {
+  spotifySong(value);
+} else if (command === "concert-this") {
+  concertThis(value);
+} else if (command === "movie-this") {
+  movieThis(value);
+} else {
+  doWhatItSays(value);
+}
